@@ -38,6 +38,7 @@ import { toast } from "sonner";
 
 interface WidgetCardProps {
   widget: Widget;
+  testimonials?: any[];
 }
 
 const layoutLabels = {
