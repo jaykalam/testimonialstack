@@ -227,8 +227,8 @@ export function TestimonialCard({ testimonial }: TestimonialCardProps) {
           <Badge className={statusColors[testimonial.status]}>
             {testimonial.status}
           </Badge>
-          <span className="text-xs text-muted-foreground">
-            {new Date(testimonial.created_at).toLocaleDateString()}
+          <span className="text-xs text-muted-foreground" suppressHydrationWarning>
+            {new Date(testimonial.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
           </span>
         </CardFooter>
       </Card>
