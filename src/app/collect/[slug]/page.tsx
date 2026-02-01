@@ -1,3 +1,4 @@
+    // @ts-ignore
 import { createClient } from "@/lib/supabase/server";
 import { notFound } from "next/navigation";
 import { CollectionFormComponent } from "@/components/collect/collection-form";

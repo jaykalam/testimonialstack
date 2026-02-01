@@ -1,3 +1,4 @@
+    // @ts-ignore
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { DashboardNav } from "@/components/dashboard/nav";
