@@ -94,7 +94,7 @@ export function WidgetEditForm({ widget, allTestimonials }: WidgetEditFormProps)
     setLoading(true);
 
     try {
-      const { error } = await supabase
+      const { error } = await (supabase as any)
         .from("widgets")
         .update({
           name: formData.name,

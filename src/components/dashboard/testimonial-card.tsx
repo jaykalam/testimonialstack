@@ -47,7 +47,7 @@ export function TestimonialCard({ testimonial }: TestimonialCardProps) {
   const handleStatusChange = async (status: "approved" | "rejected") => {
     setLoading(true);
     try {
-      const { error } = await supabase
+      const { error } = await (supabase as any)
         .from("testimonials")
         .update({ status })
         .eq("id", testimonial.id);
@@ -66,7 +66,7 @@ export function TestimonialCard({ testimonial }: TestimonialCardProps) {
   const handleToggleFeatured = async () => {
     setLoading(true);
     try {
-      const { error } = await supabase
+      const { error } = await (supabase as any)
         .from("testimonials")
         .update({ is_featured: !testimonial.is_featured })
         .eq("id", testimonial.id);

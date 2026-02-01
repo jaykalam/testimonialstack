@@ -1,7 +1,7 @@
-    // @ts-ignore
 import { createClient } from "@/lib/supabase/server";
 import { notFound } from "next/navigation";
 import { CollectionFormComponent } from "@/components/collect/collection-form";
+import { CollectionPage } from "@/types/database";
 
 export const dynamic = "force-dynamic";
 
@@ -13,12 +13,14 @@ export async function generateMetadata({
   const { slug } = await params;
   const supabase = await createClient();
 
-  const { data: page } = await supabase
+  const { data } = await supabase
     .from("collection_pages")
     .select("*")
     .eq("slug", slug)
     .eq("is_active", true)
     .single();
+
+  const page = data as CollectionPage | null;
 
   if (!page) {
     return {
@@ -40,12 +42,14 @@ export default async function CollectPage({
   const { slug } = await params;
   const supabase = await createClient();
 
-  const { data: page } = await supabase
+  const { data } = await supabase
     .from("collection_pages")
     .select("*")
     .eq("slug", slug)
     .eq("is_active", true)
     .single();
+
+  const page = data as CollectionPage | null;
 
   if (!page) {
     notFound();

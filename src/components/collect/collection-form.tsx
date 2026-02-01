@@ -29,7 +29,7 @@ export function CollectionFormComponent({ page }: CollectionFormComponentProps) 
     answers: {} as Record<string, string>,
   });
 
-  const questions = Array.isArray(page.questions) ? page.questions : [];
+  const questions: string[] = Array.isArray(page.questions) ? (page.questions as string[]) : [];
 
   const handleQuestionChange = (index: number, value: string) => {
     setFormData({
@@ -67,7 +67,7 @@ export function CollectionFormComponent({ page }: CollectionFormComponentProps) 
         ? `${answersText}\n\n${formData.content}`
         : formData.content;
 
-      const { error } = await supabase.from("testimonials").insert({
+      const { error } = await (supabase as any).from("testimonials").insert({
         user_id: page.user_id,
         collection_page_id: page.id,
         author_name: formData.author_name,

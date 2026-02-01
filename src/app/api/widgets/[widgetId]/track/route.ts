@@ -1,4 +1,3 @@
-import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { NextRequest, NextResponse } from 'next/server'
 
@@ -7,6 +6,12 @@ export const runtime = 'nodejs'
 interface TrackRequest {
   event: 'click' | 'impression'
   testimonialId?: string
+}
+
+interface WidgetMetrics {
+  id: string
+  clicks: number
+  impressions: number
 }
 
 interface TrackResponse {
@@ -75,13 +80,13 @@ export async function POST(
     const supabase = createAdminClient()
 
     // Verify widget exists and get current count
-    const { data: widget, error: widgetError } = await supabase
+    const { data: widgetData, error: widgetError } = await supabase
       .from('widgets')
       .select('id, clicks, impressions')
       .eq('id', widgetId)
       .single()
 
-    if (widgetError || !widget) {
+    if (widgetError || !widgetData) {
       return NextResponse.json(
         { success: false, error: 'Widget not found' } as TrackResponse,
         {
@@ -95,12 +100,14 @@ export async function POST(
       )
     }
 
+    const widget = widgetData as unknown as WidgetMetrics
+
     // Update the appropriate counter
     const updateData = event === 'click'
       ? { clicks: (widget.clicks || 0) + 1 }
       : { impressions: (widget.impressions || 0) + 1 }
 
-    const { error: updateError } = await supabase
+    const { error: updateError } = await (supabase as any)
       .from('widgets')
       .update(updateData)
       .eq('id', widgetId)

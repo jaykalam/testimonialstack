@@ -71,7 +71,7 @@ export function CollectionPageCard({ page, appUrl }: CollectionPageCardProps) {
   const handleToggleActive = async () => {
     setLoading(true);
     try {
-      const { error } = await supabase
+      const { error } = await (supabase as any)
         .from("collection_pages")
         .update({ is_active: !page.is_active })
         .eq("id", page.id);
