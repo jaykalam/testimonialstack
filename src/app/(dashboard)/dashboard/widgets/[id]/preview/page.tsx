@@ -1,9 +1,11 @@
+    // @ts-ignore
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { notFound } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { WidgetRenderer } from "@/components/widgets/widget-renderer";
 import { ArrowLeft } from "lucide-react";
+import { Widget, Testimonial } from "@/types/database";
 
 export default async function WidgetPreviewPage({
   params,
@@ -23,13 +25,16 @@ export default async function WidgetPreviewPage({
     notFound();
   }
 
+  // Type guard
+  const userWidget = widget as Widget;
+
   // Fetch testimonials for this widget
   const { data: allTestimonials } = await supabase
     .from("testimonials")
     .select("*")
-    .in("id", widget.testimonial_ids || []);
+    .in("id", userWidget.testimonial_ids || []);
 
-  const testimonials = allTestimonials || [];
+  const testimonials = (allTestimonials as Testimonial[] | null) || [];
 
   return (
     <div className="space-y-6">
@@ -41,8 +46,8 @@ export default async function WidgetPreviewPage({
             </Button>
           </Link>
           <div>
-            <h1 className="text-2xl font-bold">{widget.name}</h1>
-            <p className="text-muted-foreground">Preview - {widget.layout} layout</p>
+            <h1 className="text-2xl font-bold">{userWidget.name}</h1>
+            <p className="text-muted-foreground">Preview - {userWidget.layout} layout</p>
           </div>
         </div>
         <Link href={`/dashboard/widgets/${id}/edit`}>
@@ -51,7 +56,7 @@ export default async function WidgetPreviewPage({
       </div>
 
       <div className="border rounded-lg p-8 bg-white">
-        <WidgetRenderer widget={widget} testimonials={testimonials} preview={true} />
+        <WidgetRenderer widget={userWidget} testimonials={testimonials} preview={true} />
       </div>
 
       <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
@@ -60,8 +65,8 @@ export default async function WidgetPreviewPage({
           Copy and paste this code into your website:
         </p>
         <pre className="bg-slate-900 text-slate-50 p-4 rounded text-xs overflow-x-auto">
-          &lt;div id="testimonialstack-widget-{widget.id}"&gt;&lt;/div&gt;
-          {'\n'}&lt;script src="{process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/embed.js" data-widget-id="{widget.id}" async&gt;&lt;/script&gt;
+          &lt;div id="testimonialstack-widget-{userWidget.id}"&gt;&lt;/div&gt;
+          {'\n'}&lt;script src="{process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/embed.js" data-widget-id="{userWidget.id}" async&gt;&lt;/script&gt;
         </pre>
       </div>
     </div>

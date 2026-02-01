@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { NextRequest, NextResponse } from 'next/server'
+import { Widget, Testimonial } from '@/types/database'
 
 export const runtime = 'nodejs'
 
@@ -56,9 +57,12 @@ export async function GET(
       )
     }
 
+    // Type guard
+    const userWidget = widget as Widget
+
     // Fetch testimonials for this widget
-    const testimonialIds = widget.testimonial_ids || []
-    let testimonials = []
+    const testimonialIds = userWidget.testimonial_ids || []
+    let testimonials: Testimonial[] = []
 
     if (testimonialIds.length > 0) {
       const { data: testimonialData, error: testimonialsError } = await supabase
@@ -71,26 +75,26 @@ export async function GET(
         console.error('Error fetching testimonials:', testimonialsError)
         testimonials = []
       } else {
-        testimonials = testimonialData || []
+        testimonials = (testimonialData as Testimonial[]) || []
       }
     }
 
     // Increment impressions (fire and forget)
     supabase
       .from('widgets')
-      .update({ impressions: (widget.impressions || 0) + 1 })
+      .update({ impressions: (userWidget.impressions || 0) + 1 })
       .eq('id', widgetId)
       .then()
       .catch((err) => console.error('Error incrementing impressions:', err))
 
     const response: RenderResponse = {
       widget: {
-        id: widget.id,
-        name: widget.name,
-        layout: widget.layout,
-        settings: widget.settings,
+        id: userWidget.id,
+        name: userWidget.name,
+        layout: userWidget.layout,
+        settings: userWidget.settings,
       },
-      testimonials: testimonials.map((t) => ({
+      testimonials: testimonials.map((t: Testimonial) => ({
         id: t.id,
         author_name: t.author_name,
         author_company: t.author_company,

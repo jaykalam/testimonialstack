@@ -5,7 +5,6 @@ import {
   updateSubscription,
   listProducts,
   listVariants,
-  getCheckoutURL,
   createCheckout,
 } from '@lemonsqueezy/lemonsqueezy.js'
 
@@ -90,5 +89,3 @@ export async function resumeUserSubscription(subscriptionId: string) {
   if (error) throw error
   return data
 }
-
-export { getCheckoutURL }

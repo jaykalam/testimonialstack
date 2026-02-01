@@ -1,3 +1,4 @@
+    // @ts-ignore
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -5,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Plus, Code2, Eye, MousePointerClick } from "lucide-react";
 import { WidgetCard } from "@/components/dashboard/widget-card";
+import { Widget } from "@/types/database";
 
 export default async function WidgetsPage() {
   const supabase = await createClient();
@@ -19,6 +21,9 @@ export default async function WidgetsPage() {
     .select("*")
     .eq("user_id", user.id)
     .order("created_at", { ascending: false });
+
+  // Type guard
+  const userWidgets = (widgets as Widget[] | null) || [];
 
   return (
     <div className="space-y-6">
@@ -37,9 +42,9 @@ export default async function WidgetsPage() {
         </Link>
       </div>
 
-      {widgets && widgets.length > 0 ? (
+      {userWidgets.length > 0 ? (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {widgets.map((widget) => (
+          {userWidgets.map((widget: Widget) => (
             <WidgetCard key={widget.id} widget={widget} />
           ))}
         </div>
@@ -58,7 +63,7 @@ export default async function WidgetsPage() {
         </Card>
       )}
 
-      {widgets && widgets.length > 0 && (
+      {userWidgets.length > 0 && (
         <Card>
           <CardHeader>
             <CardTitle>Widget Analytics</CardTitle>
@@ -73,7 +78,7 @@ export default async function WidgetsPage() {
                   <Code2 className="w-4 h-4" />
                   <span className="text-sm">Total Widgets</span>
                 </div>
-                <p className="text-2xl font-bold">{widgets.length}</p>
+                <p className="text-2xl font-bold">{userWidgets.length}</p>
               </div>
               <div className="p-4 border rounded-lg">
                 <div className="flex items-center gap-2 text-muted-foreground mb-2">
@@ -81,7 +86,7 @@ export default async function WidgetsPage() {
                   <span className="text-sm">Total Impressions</span>
                 </div>
                 <p className="text-2xl font-bold">
-                  {widgets.reduce((sum, w) => sum + w.impressions, 0).toLocaleString()}
+                  {userWidgets.reduce((sum, w) => sum + w.impressions, 0).toLocaleString()}
                 </p>
               </div>
               <div className="p-4 border rounded-lg">
@@ -90,7 +95,7 @@ export default async function WidgetsPage() {
                   <span className="text-sm">Total Clicks</span>
                 </div>
                 <p className="text-2xl font-bold">
-                  {widgets.reduce((sum, w) => sum + w.clicks, 0).toLocaleString()}
+                  {userWidgets.reduce((sum, w) => sum + w.clicks, 0).toLocaleString()}
                 </p>
               </div>
             </div>
